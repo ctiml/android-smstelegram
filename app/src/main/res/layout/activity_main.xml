@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="tw.ctiml.android.smstelegram.MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="10dp"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/etChatId"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:hint="@string/et_chat_id_hint"
+            android:inputType="text"
+            tools:layout_editor_absoluteX="57dp"
+            tools:layout_editor_absoluteY="48dp" />
+
+        <EditText
+            android:id="@+id/etToken"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/et_token_hint"
+            android:inputType="textMultiLine"
+            android:maxLines="10"
+            android:minLines="2"
+            android:scrollHorizontally="false"
+            tools:layout_editor_absoluteX="57dp"
+            tools:layout_editor_absoluteY="114dp" />
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="@string/btn_save"
+            tools:layout_editor_absoluteX="117dp"
+            tools:layout_editor_absoluteY="192dp" />
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>
