@@ -15,6 +15,8 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -116,7 +118,12 @@ public class QueueService extends Service {
             try {
                 text = queue.takeFirst();
                 if (isInternetAvailable()) {
-                    send(text);
+                    boolean ok = send(text);
+                    if (!ok) {
+                        Log.w("SMS_RECEIVE", "Telegram API unavailable, retry");
+                        queue.putFirst(text);
+                        Thread.sleep(10000);
+                    }
                 } else {
                     Log.w("SMS_RECEIVE", "Internet unavailable, requeue and wait");
                     queue.putFirst(text);
@@ -128,10 +135,10 @@ public class QueueService extends Service {
         }
     }
 
-    private void send(String text) {
+    private boolean send(String text) {
 
         params = new LinkedHashMap<>();
-        params.put("parse_mode", "MarkdownV2");
+        //params.put("parse_mode", "MarkdownV2");
         params.put("chat_id", chat_id);
         params.put("text", text);
 
@@ -155,14 +162,23 @@ public class QueueService extends Service {
             conn.getOutputStream().write(postDataBytes);
 
             in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+            int code = conn.getResponseCode();
+            if (code != 200) {
+                return false;
+            }
+
             responseData = new StringBuilder();
             int c;
             while ((c = in.read()) >= 0) {
                 responseData.append((char) c);
             }
-            Log.i("SMS_RECEIVE", responseData.toString());
+            String resJson = responseData.toString();
+            Log.i("SMS_RECEIVE", resJson);
+            JSONObject o = new JSONObject(resJson);
+            return o.getBoolean("ok");
         } catch (Exception e) {
             Log.w("SMS_RECEIVE", e.getMessage());
+            return false;
         }
     }
 

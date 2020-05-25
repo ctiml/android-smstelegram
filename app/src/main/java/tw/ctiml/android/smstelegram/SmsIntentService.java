@@ -53,7 +53,7 @@ public class SmsIntentService extends IntentService {
                 message = SmsMessage.createFromPdu(intent.getByteArrayExtra("sms" + i));
             }
             if (i == 0) {
-                sb.append(String.format("`%s` ", message.getOriginatingAddress()));
+                sb.append(String.format("☎ %s\n", message.getOriginatingAddress()));
             }
             sb.append(message.getMessageBody());
         }
