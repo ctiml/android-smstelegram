@@ -4,4 +4,6 @@
     <string name="et_token_hint">token</string>
     <string name="btn_save">save</string>
     <string name="pref_name">telegram_pref</string>
+    <string name="permission_not_granted">Permission not granted</string>
+    <string name="failure_permission">Failure permission</string>
 </resources>
