@@ -40,8 +40,7 @@
         <service
             android:name=".QueueService"
             android:enabled="true"
-            android:exported="true"
-            android:stopWithTask="true" />
+            android:exported="true" />
     </application>
 
 </manifest>
