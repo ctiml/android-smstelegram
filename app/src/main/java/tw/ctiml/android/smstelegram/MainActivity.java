@@ -2,11 +2,9 @@ package tw.ctiml.android.smstelegram;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -49,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        startService();
+        QueueService.start(this);
     }
 
     private void checkForSmsPermission() {
@@ -86,10 +84,5 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-    }
-
-    public void startService() {
-        Intent serviceIntent = new Intent(this, QueueService.class);
-        ContextCompat.startForegroundService(this, serviceIntent);
     }
 }

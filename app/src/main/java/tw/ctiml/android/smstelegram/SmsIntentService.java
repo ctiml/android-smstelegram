@@ -7,11 +7,6 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.telephony.SmsMessage;
 
-import java.io.Reader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Map;
-
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
  * a service on a separate handler thread.
@@ -26,19 +21,20 @@ public class SmsIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        if (intent == null) { return; }
+
         SharedPreferences sharedPref = getSharedPreferences(getString(R.string.pref_name), Context.MODE_PRIVATE);
         String chat_id = sharedPref.getString(getString(R.string.et_chat_id_hint), "");
         String token = sharedPref.getString(getString(R.string.et_token_hint), "");
-        String text = null;
 
-        if (intent != null && chat_id.length() > 0 && token.length() > 0) {
-            text = getTextFromSmsMessage(intent);
+        if (chat_id.length() == 0 || token.length() == 0) { return; }
 
-            try {
-                QueueService.queue.putLast(text);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        String text = getTextFromSmsMessage(intent);
+
+        try {
+            QueueService.queue.putLast(text);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 

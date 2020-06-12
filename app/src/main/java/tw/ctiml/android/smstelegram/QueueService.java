@@ -1,5 +1,6 @@
 package tw.ctiml.android.smstelegram;
 
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -14,6 +15,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 import org.json.JSONObject;
 
@@ -45,6 +47,34 @@ public class QueueService extends Service {
     private byte[] postDataBytes;
     private Reader in;
 
+    public static void start(Context context) {
+        createNotificationChannel(context);
+
+        ActivityManager manager = (ActivityManager) context.getSystemService(ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)){
+            if(QueueService.class.getName().equals(service.service.getClassName())) {
+                return;
+            }
+        }
+        Intent serviceIntent = new Intent(context, QueueService.class);
+        ContextCompat.startForegroundService(context, serviceIntent);
+    }
+
+    private static void createNotificationChannel(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager manager = context.getSystemService(NotificationManager.class);
+            NotificationChannel serviceChannel = manager.getNotificationChannel(CHANNEL_ID);
+            if (serviceChannel == null) {
+                serviceChannel = new NotificationChannel(
+                        CHANNEL_ID,
+                        "Foreground Service Channel",
+                        NotificationManager.IMPORTANCE_DEFAULT
+                );
+                manager.createNotificationChannel(serviceChannel);
+            }
+        }
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -52,7 +82,6 @@ public class QueueService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        createNotificationChannel();
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
                 0, notificationIntent, 0);
@@ -90,7 +119,6 @@ public class QueueService extends Service {
 
     @Override
     public void onDestroy() {
-
         super.onDestroy();
     }
 
@@ -98,18 +126,6 @@ public class QueueService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
-    }
-
-    private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel serviceChannel = new NotificationChannel(
-                    CHANNEL_ID,
-                    "Foreground Service Channel",
-                    NotificationManager.IMPORTANCE_DEFAULT
-            );
-            NotificationManager manager = getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(serviceChannel);
-        }
     }
 
     private void checkAndSend() {

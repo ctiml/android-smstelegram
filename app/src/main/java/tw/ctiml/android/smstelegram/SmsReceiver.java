@@ -16,6 +16,8 @@ public class SmsReceiver extends BroadcastReceiver {
         Object[] pdus = (Object[]) pdusBundle.get("pdus");
         String format = (String) pdusBundle.get("format");
 
+        QueueService.start(context);
+
         if (pdus.length > 0) {
             Intent service_intent = new Intent(context, SmsIntentService.class);
             for (int i = 0; i < pdus.length; i++) {
